@@ -26,7 +26,6 @@ def read_table(urlpath):
         return "SOME_OTHER_ERROR", "SOME_OTHER_ERROR"
 
 
-
 def output_file(inputFilename, outputFilename, sr):
     infoList = np.genfromtxt(inputFilename, skip_header=1, dtype=None)
     nameList = []
