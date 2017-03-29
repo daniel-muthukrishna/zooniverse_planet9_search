@@ -7,7 +7,7 @@ import os.path
 def xy_to_radec(filename, x, y):
     if os.path.isfile(filename):
         w = WCS(filename)
-        ra, dec = w.all_pix2world(x, y, 0)
+        ra, dec = w.all_pix2world(x, 500-y, 0)
 
         return ra, dec
     else:

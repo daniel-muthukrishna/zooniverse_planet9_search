@@ -14,10 +14,11 @@ class GetPointInfo(object):
         self.filename = filename
         self.colour = colour
         self.field = self.get_field_from_filename()
-        self.epoch, self.mjddate = self.get_epoch()
+        self.epoch, self.julian = self.get_epoch()
         self.ra, self.dec = self.get_radec()
-        searchRadius = 0.1
-        self.catalogName, self.catalogNum = self.get_catalog_entry(self.ra, self.dec, self.mjddate, searchRadius)
+        searchRadiusArcsec = 40.
+        searchRadiusDeg = searchRadiusArcsec/3600.
+        self.catalogName, self.catalogNum = self.get_catalog_entry(self.ra, self.dec, self.julian, searchRadiusDeg)
 
     def get_field_from_filename(self):
         field = self.filename.split("_")[0].strip("f")
@@ -35,14 +36,14 @@ class GetPointInfo(object):
         return ra, dec
 
     def get_epoch(self):
-        epoch, mjddate = get_date_time(str(self.field), self.colour)
+        epoch, julian = get_date_time(str(self.field), self.colour)
 
-        return epoch, mjddate
+        return epoch, julian
 
     @staticmethod
-    def get_catalog_entry(ra, dec, mjddate, searchRadius):
+    def get_catalog_entry(ra, dec, julian, searchRadius):
         if (ra, dec) != (0, 0):
-            catalogName, catalogNum = check_catalog(ra, dec, mjddate, searchRadius)
+            catalogName, catalogNum = check_catalog(ra, dec, julian, searchRadius)
         else:
             catalogName, catalogNum = "NO_FITS_FILE_FOUND", "NO_FITS_FILE_FOUND"
 
@@ -71,7 +72,7 @@ def output_line(x, y, filename, subjectID):
     outLines = []
     for colour in ['r', 'g', 'b']:
         outInfo = GetPointInfo(x, y, filename, colour)
-        outLine = [subjectID, filename, colour, outInfo.ra, outInfo.dec, outInfo.epoch, outInfo.mjddate, outInfo.catalogName, outInfo.catalogNum]
+        outLine = [subjectID, filename, colour, float(outInfo.ra), float(outInfo.dec), outInfo.julian, outInfo.catalogName, outInfo.catalogNum]
         outLines.append(outLine)
         print(outInfo.catalogName)
 
