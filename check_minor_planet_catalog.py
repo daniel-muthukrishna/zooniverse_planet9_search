@@ -2,12 +2,6 @@ import numpy as np
 from astropy.table import Table
 
 
-class check_catalog(object):
-    def __init__(self, inFilename, outFilename):
-        self.inFilename = inFilename
-        self.outFilename = outFilename
-
-
 def url_path(ra, dec, epoch, sr):
     url = "http://vo.imcce.fr/webservices/skybot/skybotconesearch_query.php?EPOCH=" + epoch + "&RA=" + ra + "&DEC=" + dec + "&SR=" + str(sr)
 

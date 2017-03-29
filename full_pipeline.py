@@ -1,0 +1,1 @@
+import check_minor_planet_catalog
