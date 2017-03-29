@@ -20,6 +20,13 @@ def read_table(urlpath):
         return "SOME_OTHER_ERROR", "SOME_OTHER_ERROR"
 
 
+def check_catalog(ra, dec, epoch, searchRadius):
+    url = url_path(ra, dec, epoch, searchRadius)
+    catalogName, catalogNum = read_table(url)
+
+    return catalogName, catalogNum
+
+
 def output_file(inputFilename, outputFilename, sr):
     infoList = np.genfromtxt(inputFilename, skip_header=1, dtype=None)
     nameList = []
