@@ -14,10 +14,10 @@ def read_table(urlpath):
         return t[0]['name'].decode("utf-8"), t[0]['num'].decode("utf-8")
     except ValueError:
         return "NOTFOUND", "NOTFOUND"
-    except urlib.error.URLError:
-        return "NO_URL_FOUND", "NO_URL_FOUND"
     except:
-        return "SOME_OTHER_ERROR", "SOME_OTHER_ERROR"
+        return "NO_URL_FOUND", " OR NO FITS FILE EXISTS"
+    # except urlib.error.URLError:
+    #     return "SOME_OTHER_ERROR", "SOME_OTHER_ERROR"
 
 
 def check_catalog(ra, dec, epoch, searchRadius):
