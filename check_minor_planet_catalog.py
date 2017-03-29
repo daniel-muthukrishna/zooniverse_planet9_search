@@ -15,7 +15,7 @@ def read_table(urlpath):
     except ValueError:
         return "NOTFOUND", "NOTFOUND"
     except:
-        return "NO_URL_FOUND", " OR NO FITS FILE EXISTS"
+        return "NO_URL_FOUND", "NO_URL_FOUND"
     # except urlib.error.URLError:
     #     return "SOME_OTHER_ERROR", "SOME_OTHER_ERROR"
 

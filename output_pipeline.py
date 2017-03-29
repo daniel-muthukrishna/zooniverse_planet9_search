@@ -3,6 +3,8 @@ from xy_to_radec import xy_to_radec
 from get_date_time import get_date_time
 import pandas as pd
 import json
+import csv
+import sys
 
 
 class GetPointInfo(object):
@@ -12,10 +14,10 @@ class GetPointInfo(object):
         self.filename = filename
         self.colour = colour
         self.field = self.get_field_from_filename()
-        self.epoch, self.obsdate = self.get_epoch()
+        self.epoch, self.mjddate = self.get_epoch()
         self.ra, self.dec = self.get_radec()
-        searchRadius = 0.017
-        self.catalogName, self.catalogNum = self.get_catalog_entry(self.ra, self.dec, self.epoch, searchRadius)
+        searchRadius = 0.1
+        self.catalogName, self.catalogNum = self.get_catalog_entry(self.ra, self.dec, self.mjddate, searchRadius)
 
     def get_field_from_filename(self):
         field = self.filename.split("_")[0].strip("f")
@@ -33,13 +35,16 @@ class GetPointInfo(object):
         return ra, dec
 
     def get_epoch(self):
-        epoch, obsdate = get_date_time(str(self.field), self.colour)
+        epoch, mjddate = get_date_time(str(self.field), self.colour)
 
-        return epoch, obsdate
+        return epoch, mjddate
 
     @staticmethod
-    def get_catalog_entry(ra, dec, epoch, searchRadius):
-        catalogName, catalogNum = check_catalog(ra, dec, epoch, searchRadius)
+    def get_catalog_entry(ra, dec, mjddate, searchRadius):
+        if (ra, dec) != (0, 0):
+            catalogName, catalogNum = check_catalog(ra, dec, mjddate, searchRadius)
+        else:
+            catalogName, catalogNum = "NO_FITS_FILE_FOUND", "NO_FITS_FILE_FOUND"
 
         return catalogName, catalogNum
 
@@ -59,26 +64,37 @@ def read_input_file(csvFile):
             outputLine = output_line(mark[0], mark[1], filename, subjectID)
             outputLines.append(outputLine)
 
+    return outputLines
+
 
 def output_line(x, y, filename, subjectID):
     outLines = []
     for colour in ['r', 'g', 'b']:
         outInfo = GetPointInfo(x, y, filename, colour)
-        outLine = [subjectID, filename, colour, outInfo.ra, outInfo.dec, outInfo.epoch, outInfo.catalogName, outInfo.catalogNum]
+        outLine = [subjectID, filename, colour, outInfo.ra, outInfo.dec, outInfo.epoch, outInfo.mjddate, outInfo.catalogName, outInfo.catalogNum]
         outLines.append(outLine)
         print(outInfo.catalogName)
 
     return outLines
 
 
-def output_to_file():
-    pass
+def output_to_file(inCSVFile, outFileName="output-subjects-of-interests.csv"):
+    outputTable = read_input_file(inCSVFile)
+    if sys.version_info >= (3, 0, 0):
+        outFile = open(outFileName, 'w', newline='')
+    else:
+        outFile = open(outFileName, 'wb')
+
+    wr = csv.writer(outFile)
+    wr.writerows(outputTable)
+
+    return outputTable
 
 
 
 if __name__ == '__main__':
     csvFile = 'subjects-of-interest.csv'
-    read_input_file(csvFile)
+    print(output_to_file(csvFile))
 
 
 
