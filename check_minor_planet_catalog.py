@@ -39,10 +39,7 @@ def output_file(inputFilename, outputFilename, sr):
     return nameList
 
 
-
-
-
-print(output_file('testInput.csv', 'testOutput.csv', 0.003))
+# print(output_file('testInput.csv', 'testOutput.csv', 0.003))
 
 
 
