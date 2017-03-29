@@ -74,7 +74,7 @@ def output_line(x, y, filename, subjectID):
         outInfo = GetPointInfo(x, y, filename, colour)
         outLine = [subjectID, filename, colour, float(outInfo.ra), float(outInfo.dec), outInfo.julian, outInfo.catalogName, outInfo.catalogNum]
         outLines.append(outLine)
-        print(outInfo.catalogName)
+        print(outInfo.catalogName, filename, subjectID, (outInfo.ra, outInfo.dec), colour, (outInfo.ra, outInfo.dec))
 
     return outLines
 
