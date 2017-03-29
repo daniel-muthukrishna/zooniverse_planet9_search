@@ -26,8 +26,9 @@ class GetPointInfo(object):
         f = self.filename.split(".")[0].split('-')[0].split('_')[0]
         c = self.filename.split(".")[0].split('-')[0].split('_')[1]
         fitsFilename = f + '_' + 'e2_' + c + '.fits'
+        filePath = self.field + '/' + fitsFilename
 
-        ra, dec = xy_to_radec(fitsFilename, self.x, self.y)
+        ra, dec = xy_to_radec(filePath, self.x, self.y)
 
         return ra, dec
 
@@ -59,20 +60,13 @@ def read_input_file(csvFile):
             outputLines.append(outputLine)
 
 
-
-
-
-
-
-
-
-
 def output_line(x, y, filename, subjectID):
     outLines = []
     for colour in ['r', 'g', 'b']:
         outInfo = GetPointInfo(x, y, filename, colour)
         outLine = [subjectID, filename, colour, outInfo.ra, outInfo.dec, outInfo.epoch, outInfo.catalogName, outInfo.catalogNum]
         outLines.append(outLine)
+        print(outInfo.catalogName)
 
     return outLines
 

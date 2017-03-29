@@ -3,7 +3,7 @@ from astropy.table import Table
 
 
 def url_path(ra, dec, epoch, sr):
-    "http://vo.imcce.fr/webservices/skybot/skybotconesearch_query.php?EPOCH={}&RA={}&DEC={}&SR={}".format(epoch, ra,dec, sr)
+    url = "http://vo.imcce.fr/webservices/skybot/skybotconesearch_query.php?EPOCH={}&RA={}&DEC={}&SR={}".format(epoch, ra,dec, sr)
 
     return url
 
