@@ -5,6 +5,7 @@ import pandas as pd
 import json
 import csv
 import sys
+from astropy.time import Time
 
 
 class GetPointInfo(object):
@@ -42,10 +43,12 @@ class GetPointInfo(object):
 
     @staticmethod
     def get_catalog_entry(ra, dec, julian, searchRadius):
-        if (ra, dec) != (0, 0):
-            catalogName, catalogNum = check_catalog(ra, dec, julian, searchRadius)
-        else:
+        if (ra, dec) == (0, 0):
             catalogName, catalogNum = "NO_FITS_FILE_FOUND", "NO_FITS_FILE_FOUND"
+        elif (julian == 0):
+            catalogName, catalogNum = "NO_DATE_FOUND", "NO_DATE_FOUND"
+        else:
+            catalogName, catalogNum = check_catalog(ra, dec, julian, searchRadius)
 
         return catalogName, catalogNum
 
@@ -72,9 +75,9 @@ def output_line(x, y, filename, subjectID):
     outLines = []
     for colour in ['r', 'g', 'b']:
         outInfo = GetPointInfo(x, y, filename, colour)
-        outLine = [subjectID, filename, colour, float(outInfo.ra), float(outInfo.dec), outInfo.julian, outInfo.catalogName, outInfo.catalogNum]
+        outLine = [subjectID, filename, colour, float(outInfo.ra), float(outInfo.dec), float(outInfo.x), float(outInfo.y), outInfo.julian, outInfo.catalogName, outInfo.catalogNum]
         outLines.append(outLine)
-        print(outInfo.catalogName, filename, subjectID, (outInfo.ra, outInfo.dec), colour, (outInfo.ra, outInfo.dec))
+        print(outInfo.catalogName, filename, subjectID, (float(outInfo.ra), float(outInfo.dec)), colour, (float(outInfo.x), float(outInfo.y)))
 
     return outLines
 
@@ -91,6 +94,14 @@ def output_to_file(inCSVFile, outFileName="output-subjects-of-interests.csv"):
 
     return outputTable
 
+# def findorb_write_line(subjectID, julian, ra, dec):
+#     t = Time([julian], format='jd')
+#     time = t.tt.fits[0]
+#     row = "     {}  J2014 08 31.65338 23 58 23.09 -01 57 41.5                      260".format(subjectID)
+#
+# def create_findorb_input_file(subjectID):
+#     header = "Name~~~~~~~~Date~~~~~~~~~~~~~~~~RA~~~~~~~~~~DEC~~~~~~~~~Blanks~~~~~~~~~~~~~~~ObservatoryID"
+#     row = findorb_write_line()
 
 
 if __name__ == '__main__':
