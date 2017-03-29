@@ -9,4 +9,4 @@ def xy_to_radec(filename, x, y):
 
     return ra, dec
 
-# print(xy_to_radec('f245_e2_c845.fits', 0, 0))
+# print(xy_to_radec('f150_e2_c441.fits', 414, 249))
