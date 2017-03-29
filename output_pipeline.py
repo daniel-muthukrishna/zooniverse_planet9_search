@@ -26,7 +26,7 @@ class GetPointInfo(object):
         f = self.filename.split(".")[0].split('-')[0].split('_')[0]
         c = self.filename.split(".")[0].split('-')[0].split('_')[1]
         fitsFilename = f + '_' + 'e2_' + c + '.fits'
-        filePath = self.field + '/' + fitsFilename
+        filePath = '../' + self.field + '/' + fitsFilename
 
         ra, dec = xy_to_radec(filePath, self.x, self.y)
 
