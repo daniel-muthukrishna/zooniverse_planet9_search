@@ -117,7 +117,10 @@ def findorb_write_line(subjectID, julian, ra, dec):
     year = time[0]
     month = time[1]
     day = time[2].split('T')[0]
-    (h, m, s) = time[2].split('T')[1].strip('(').split(':')
+    if (julian != 0):
+        (h, m, s) = time[2].split('T')[1].strip('(').split(':')
+    else:
+        (h, m, s) = (0, 0, 0)
     timeFraction = round((int(h) * 3600 + int(m) * 60 + float(s)) / (24 * 60 * 60.), 5)
     timeFractionAsStr = str(round(timeFraction, 5)).strip('0.')
     raHour = int(ra/360.)
@@ -141,7 +144,7 @@ def create_findorb_input_file(subjectID):
 
 
 if __name__ == '__main__':
-    csvFile = 'subjects-of-interest.csv'
+    csvFile = 'subjects-of-interest-lastnight.csv'
     print(output_to_file(csvFile, fitsFoldersPath="."))
 
 
