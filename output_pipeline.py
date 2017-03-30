@@ -6,15 +6,15 @@ import json
 import csv
 import sys
 from astropy.time import Time
-import datetime
 
 
 class GetPointInfo(object):
-    def __init__(self, x, y, filename, colour):
+    def __init__(self, x, y, filename, colour, fitsFoldersPath):
         self.x = x
         self.y = y
         self.filename = filename
         self.colour = colour
+        self.fitsFoldersPath = fitsFoldersPath
         self.field = self.get_field_from_filename()
         self.epoch, self.julian = self.get_epoch()
         self.ra, self.dec = self.get_radec()
@@ -31,7 +31,7 @@ class GetPointInfo(object):
         f = self.filename.split(".")[0].split('-')[0].split('_')[0]
         c = self.filename.split(".")[0].split('-')[0].split('_')[1]
         fitsFilename = f + '_' + 'e2_' + c + '.fits'
-        filePath = '../' + self.field + '/' + fitsFilename
+        filePath = self.fitsFoldersPath + self.field + '/' + fitsFilename
 
         ra, dec = xy_to_radec(filePath, self.x, self.y)
 
@@ -54,7 +54,7 @@ class GetPointInfo(object):
         return catalogName, catalogNum
 
 
-def read_input_file(csvFile):
+def read_input_file(csvFile, fitsFoldersPath):
     outputLines = []
     findOrbLines = []
     df = pd.read_csv(csvFile)
@@ -67,18 +67,18 @@ def read_input_file(csvFile):
         marks = json.loads(marks)
 
         for mark in marks:
-            outputLine, findOrbLine = output_line(mark[0], mark[1], filename, subjectID)
+            outputLine, findOrbLine = output_line(mark[0], mark[1], filename, subjectID, fitsFoldersPath)
             outputLines.append(outputLine)
             findOrbLines.append(findOrbLine)
 
     return outputLines, findOrbLines
 
 
-def output_line(x, y, filename, subjectID):
+def output_line(x, y, filename, subjectID, fitsFoldersPath):
     outLines = []
     findOrbLines = []
     for colour in ['r', 'g', 'b']:
-        outInfo = GetPointInfo(x, y, filename, colour)
+        outInfo = GetPointInfo(x, y, filename, colour, fitsFoldersPath)
         outLine = [subjectID, filename, colour, float(outInfo.ra), float(outInfo.dec), float(outInfo.x), float(outInfo.y), outInfo.julian, outInfo.catalogName, outInfo.catalogNum]
         outLines.append(outLine)
         print(outInfo.catalogName, filename, subjectID, (float(outInfo.ra), float(outInfo.dec)), colour, (float(outInfo.x), float(outInfo.y)))
@@ -89,8 +89,8 @@ def output_line(x, y, filename, subjectID):
     return outLines, findOrbLines
 
 
-def output_to_file(inCSVFile, outFileName="output-subjects-of-interests.csv", findOrbFile = "findOrbInput.txt"):
-    outputTable, findOrbLines = read_input_file(inCSVFile)
+def output_to_file(inCSVFile, fitsFoldersPath, outFileName="output-subjects-of-interests.csv", findOrbFile = "findOrbInput.txt"):
+    outputTable, findOrbLines = read_input_file(inCSVFile, fitsFoldersPath)
     if sys.version_info >= (3, 0, 0):
         outFile = open(outFileName, 'w', newline='')
         findOrbFile = open(findOrbFile, 'w', newline='')
@@ -102,6 +102,7 @@ def output_to_file(inCSVFile, outFileName="output-subjects-of-interests.csv", fi
     wr.writerows(outputTable)
     outFile.close()
 
+    findOrbFile.write("Name~~~~~~~~Date~~~~~~~~~~~~~~~~RA~~~~~~~~~~DEC~~~~~~~~~Blanks~~~~~~~~~~~~~~~ObservatoryID\n")
     for IDList in findOrbLines:
         for line in IDList:
             findOrbFile.write(line)
@@ -128,20 +129,20 @@ def findorb_write_line(subjectID, julian, ra, dec):
 
 
 
-    row = "     {0}  J{1} {2} {3}.{4} {5:2d} {6:2d} {7:.2f} {8:2d} {9:2d} {10:.1f}                      260\n".format(subjectID, year, month, day, timeFractionAsStr, raHour, raMin, raSec, decDeg, decHour, decMin)
-#row = "     8410550  J2014 08 31.65338 23 58 23.09 -01 57 41.5                      260"
+    row = "     {0}  J{1} {2} {3}.{4} {5:02d} {6:02d} {7:05.2f} {8:02d} {9:02d} {10:04.1f}                      260\n".format(subjectID, year, month, day, timeFractionAsStr, raHour, raMin, raSec, decDeg, decHour, decMin)
+
     return row
 
 
 def create_findorb_input_file(subjectID):
-    header = "Name~~~~~~~~Date~~~~~~~~~~~~~~~~RA~~~~~~~~~~DEC~~~~~~~~~Blanks~~~~~~~~~~~~~~~ObservatoryID"
+
     row = findorb_write_line()
 
 
 
 if __name__ == '__main__':
     csvFile = 'subjects-of-interest.csv'
-    print(output_to_file(csvFile))
+    print(output_to_file(csvFile, fitsFoldersPath="."))
 
 
 
