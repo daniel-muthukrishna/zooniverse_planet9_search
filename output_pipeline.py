@@ -145,7 +145,7 @@ def create_findorb_input_file(subjectID):
 
 if __name__ == '__main__':
     csvFile = 'subjects-of-interest-lastnight.csv'
-    print(output_to_file(csvFile, fitsFoldersPath="."))
+    print(output_to_file(csvFile, fitsFoldersPath=".."))
 
 
 
