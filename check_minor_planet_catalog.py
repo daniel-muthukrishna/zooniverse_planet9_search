@@ -11,7 +11,7 @@ def url_path(ra, dec, epoch, sr):
 def read_table(urlpath):
     try:
         t = Table.read(urlpath)
-        return t[0]['name'].decode("utf-8"), t[0]['num'].decode("utf-8")
+        return t[0]['name'], t[0]['num']
     except ValueError:
         return "NOTFOUND", "NOTFOUND"
     except:
@@ -46,7 +46,7 @@ def output_file(inputFilename, outputFilename, sr):
     return nameList
 
 
-# print(output_file('testInput.csv', 'testOutput.csv', 0.003))
+print(output_file('testInput.csv', 'testOutput.csv', 0.003))
 
 
 
