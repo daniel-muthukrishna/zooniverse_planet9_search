@@ -123,12 +123,12 @@ def findorb_write_line(subjectID, julian, ra, dec):
         (h, m, s) = (0, 0, 0)
     timeFraction = round((int(h) * 3600 + int(m) * 60 + float(s)) / (24 * 60 * 60.), 5)
     timeFractionAsStr = str(round(timeFraction, 5)).strip('0.')
-    raHour = int(ra/360.)
+    raHour = int(ra/360. * 24)
     raMin = int((ra/360 * 60) % 60)
     raSec = float((ra/360 * 3600) % 60)
     decDeg = int(dec)
-    decHour = int((float(dec) - int(dec)) * 60)
-    decMin = ((float(dec) - int(dec)) * 60 - decHour)*60
+    decHour = abs(int((float(dec) - int(dec)) * 60))
+    decMin = abs(((float(dec) - int(dec)) * 60 - decHour)*60)
 
 
 
@@ -137,9 +137,16 @@ def findorb_write_line(subjectID, julian, ra, dec):
     return row
 
 
-def create_findorb_input_file(subjectID):
+def ra_dec_convert(ra, dec):
+    raHour = int(ra/360. * 24)
+    raMin = int((ra/360 * 24 * 60) % 60)
+    raSec = float((ra/360 * 24 * 3600) % 60)
+    decDeg = int(dec)
+    decHour = abs(int((float(dec) - int(dec)) * 60))
+    decMin = abs(((float(dec) - int(dec)) * 60 - decDeg - decHour))
 
-    row = findorb_write_line()
+    return [raHour, raMin, raSec], [decDeg, decHour, decMin]
+
 
 
 
