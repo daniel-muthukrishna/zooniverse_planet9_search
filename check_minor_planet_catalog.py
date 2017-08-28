@@ -16,24 +16,24 @@ def read_table(urlpath):
     except ValueError:
         return "NOTFOUND", "NOTFOUND"
     except urllib2.URLError:
-        try:
-            return read_table_if_time_out_error(urlpath)
-        except urllib2.URLError, e:
-            print(e)
-            return "NO_URL_FOUND", "NO_URL_FOUND"
+        return read_table_if_time_out_error(urlpath)
 
     # except urlib.error.URLError:
     #     return "SOME_OTHER_ERROR", "SOME_OTHER_ERROR"
 
 
 def read_table_if_time_out_error(urlpath):
-    response = urllib2.urlopen(urlpath, timeout=5)
-    html = response.read()
-    with open('votable_test.txt', 'w') as f:
-        f.write(html)
-    t = Table.read('votable_test.txt')
+    try:
+        response = urllib2.urlopen(urlpath, timeout=5)
+        html = response.read()
+        with open('votable_test.txt', 'w') as f:
+            f.write(html)
+        t = Table.read('votable_test.txt')
+        return t[0]['name'], t[0]['num']
+    except urllib2.URLError, e:
+        print(e)
+        return "NO_URL_FOUND", "NO_URL_FOUND"
 
-    return t[0]['name'], t[0]['num']
 
 
 def check_catalog(ra, dec, epoch, searchRadius):
